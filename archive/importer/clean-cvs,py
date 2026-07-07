@@ -1,0 +1,27 @@
+python3 - << 'EOF'
+import csv
+
+inp = "/var/lib/mysql-files/9810030701.csv"
+out = "/var/lib/mysql-files/immigration_clean.csv"
+
+with open(inp, newline='', encoding='utf-8') as f, \
+     open(out, "w", newline='', encoding='utf-8') as g:
+
+    r = csv.reader(f)
+    w = csv.writer(g)
+
+    header = next(r)
+    w.writerow(header[:18])
+
+    for i, row in enumerate(r, start=2):
+
+        # fix too long
+        if len(row) > 18:
+            row = row[:18]
+
+        # fix too short
+        elif len(row) < 18:
+            row += [""] * (18 - len(row))
+
+        w.writerow(row)
+EOF

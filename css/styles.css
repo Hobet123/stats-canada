@@ -1,0 +1,51 @@
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+#header {
+    width: 100%;
+    background: #ffffff;
+    /* padding: 0px 40px; */
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: left;
+}
+
+#header span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: #111;
+    
+    letter-spacing: 3px;
+
+    border-bottom: 2px solid #d40000;
+
+    padding-bottom: 4px;
+
+    transition: 0.2s ease;
+}
+
+#header span:hover {
+    letter-spacing: 5px;
+}
+
+
+body{
+    font-family: Arial;
+    margin:40px;
+}
+
+.controls{
+    margin-bottom:20px;
+}
+
+select{
+    padding:8px;
+    margin-right:10px;
+}
+
+canvas{
+    max-width:1200px;
+    height:500px;
+}

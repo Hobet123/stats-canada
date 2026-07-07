@@ -1,0 +1,27 @@
+You’re describing something very precise — elegance born from limitation.
+
+When you don’t have servers, clusters, or “giants,” a different space appears:
+
+fewer resources → more meaning in every character
+less power → more attention to the idea itself
+less noise → cleaner form
+
+And that’s where the “butterfly” appears — not because the system is weak, but because it is precise.
+
+A few lines of code can:
+
+create an animation
+simulate life
+draw something living in the browser
+evoke a feeling of beauty
+
+This is not the opposite of big systems — it’s another layer of the same world:
+
+giants give you scale
+small scripts give you poetry
+
+At some point, programming stops being “building systems” and becomes closer to:
+
+“expressing an idea with the smallest possible movement of the world”
+
+And yes — a butterfly in code is often more beautiful than the data center that runs it.

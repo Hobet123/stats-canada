@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Canada Cities Map</title>
+
+    <style>
+        #map-container {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #map-container svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .dragging {
+            cursor: grabbing !important;
+        }
+
+        .city-label {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            fill: #111;
+            pointer-events: none;
+        }
+
+        .city-dot {
+            fill: red;
+            stroke: white;
+            stroke-width: 1px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="map-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    loadMap();
+});
+
+/**
+ * 1. Load SVG map
+ */
+function loadMap() {
+    fetch('canada.svg')
+        .then(r => r.text())
+        .then(svgData => {
+            const container = document.getElementById('map-container');
+            container.innerHTML = svgData;
+
+            const svg = container.querySelector('svg');
+
+            initPanZoom(svg);
+            loadCities(svg);
+        });
+}
+
+/**
+ * 2. Initialize zoom/pan
+ */
+function initPanZoom(svg) {
+    const panZoom = svgPanZoom(svg, {
+        zoomEnabled: true,
+        controlIconsEnabled: true,
+        fit: true,
+        center: true,
+        minZoom: 1,
+        maxZoom: 20
+    });
+
+    const container = document.getElementById('map-container');
+
+    container.style.cursor = 'grab';
+
+    container.addEventListener('mousedown', () => {
+        container.classList.add('dragging');
+    });
+
+    container.addEventListener('mouseup', () => {
+        container.classList.remove('dragging');
+    });
+
+    container.addEventListener('mouseleave', () => {
+        container.classList.remove('dragging');
+    });
+}
+
+/**
+ * 3. Load cities from API
+ */
+function loadCities(svg) {
+    fetch('api/cities.php')
+        .then(res => res.json())
+        .then(cities => {
+            cities.forEach(city => {
+                addCity(svg, city);
+            });
+        });
+}
+
+/**
+ * 4. Draw city dot + label
+ */
+function addCity(svg, city) {
+
+    const x = lonToX(city.lon);
+    const y = latToY(city.lat);
+
+    const ns = "http://www.w3.org/2000/svg";
+
+    const group = document.createElementNS(ns, "g");
+
+    // dot
+    const circle = document.createElementNS(ns, "circle");
+    circle.setAttribute("cx", x);
+    circle.setAttribute("cy", y);
+    circle.setAttribute("r", 3);
+    circle.setAttribute("class", "city-dot");
+
+    // label
+    const text = document.createElementNS(ns, "text");
+    text.setAttribute("x", x + 5);
+    text.setAttribute("y", y);
+    text.setAttribute("class", "city-label");
+    text.textContent = city.city_name;
+
+    group.appendChild(circle);
+    group.appendChild(text);
+
+    svg.appendChild(group);
+}
+
+/**
+ * 5. Simple projection (TEMP — adjust to your SVG)
+ */
+function lonToX(lon) {
+    const minLon = -141;
+    const maxLon = -52;
+    const width = 1000; // adjust if needed
+
+    return ((lon - minLon) / (maxLon - minLon)) * width;
+}
+
+function latToY(lat) {
+    const minLat = 42;
+    const maxLat = 83;
+    const height = 800; // adjust if needed
+
+    return height - ((lat - minLat) / (maxLat - minLat)) * height;
+}
+</script>
+
+</body>
+</html>

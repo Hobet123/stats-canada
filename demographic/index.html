@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canada Demographic Data</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="header">
+    <a href="/"><span>Philipp&ok</span></a>
+</div>
+
+
+<h4>📊 Demographics:</h4>
+<p>
+    Estimates of the components of demographic growth, annual
+    <br><br>
+    Geography: Canada, Province or territory
+    <br><br>
+    Description: Components of population growth, annual: births, 
+    deaths, immigrants, emigrants, returning emigrants, 
+    net temporary emigrants, net interprovincial migration, net non-permanent residents...
+</p>
+
+<div class="controls">
+
+    <select id="geo"></select>
+
+    <select id="types"></select>
+
+    <button onclick="loadChart()">Load</button>
+
+</div>
+
+<canvas id="myChart"></canvas>
+
+<script>
+
+let chart;
+
+async function loadGeos()
+{
+    const response = await fetch('https://cloude.skill-off.me/api/demo-geos');
+
+    const geos = await response.json();
+
+    const geosArray = geos.map(g => g.geo);
+
+    const geoSelect = document.getElementById('geo');
+
+    geosArray.forEach(g => {
+
+        const option = document.createElement('option');
+
+        option.value = g;
+        option.textContent = g;
+
+        geoSelect.appendChild(option);
+    });
+}
+
+async function loadTypes()
+{
+    const response = await fetch('https://cloude.skill-off.me/api/demo-types');
+
+    const types = await response.json();
+
+    const typesArray = types.map(t => t.components_of_population_growth);
+
+    const typesSelect = document.getElementById('types');
+
+    typesArray.forEach(t => {
+
+
+        const option = document.createElement('option');
+
+        option.value = t;
+        option.textContent = t;
+
+        typesSelect.appendChild(option);
+    });
+}
+
+async function loadChart()
+{
+    const geo = document.getElementById('geo').value;
+    const component = document.getElementById('types').value;
+
+    const response = await fetch('https://cloude.skill-off.me/api/demo-chart', {
+
+        method: 'POST',
+        body: new URLSearchParams({
+            geo,
+            component
+        })
+    });
+
+    const data = await response.json();
+
+    const labels = data.map(row => row.ref_date);
+    const values = data.map(row => Number(row.value));
+
+    const ctx = document.getElementById('myChart');
+
+    if(chart){
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+        type: 'line',
+
+        data: {
+            labels: labels,
+
+            datasets: [{
+                label: component + ' - ' + geo,
+                data: values,
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+
+        options: {
+            responsive: true,
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+loadGeos();
+loadTypes();
+
+</script>
+
+</body>
+</html>

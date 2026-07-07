@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div id="desc"></div>
+<script>
+
+    fetchData();
+
+    async function fetchData() {
+        try {
+
+            let html = `<b>Barrie</b><br><hr>`;
+            // 1. Send the network request
+
+            var id = 2;
+
+            const response = await fetch('api/cur_city.php?id=' + id);
+            
+            // 2. Check if the HTTP status code is successful (200-299)
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            // 3. Parse the response body as JSON
+            const rent = await response.json();
+
+            // console.log(rent[0].geo);
+
+            rent.forEach(app => {
+
+                console.log(app.property_type + '/Bedrooms: ' + app.bedrooms  + ' - $' + app.rent_price);
+
+                html += `
+                    <div style="color:black;">
+                        ${app.property_type} / ${app.bedrooms} bedrooms: <b>$${app.rent_price}</b>
+                    </div>
+                `;
+            });
+
+            const myDiv = document.getElementById("desc");
+
+            myDiv.innerHTML = html;
+
+        } catch (error) {
+            // Handles network errors or parsing errors
+            console.error('Fetch failed:', error);
+        }
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canada Immigration Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/css/immigration.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="header">
+    <a href="/"><span>Philipp&ok</span></a>
+</div>
+
+
+<h2>Canada Immigration Dashboard (2021)</h2>
+
+<div class="controls">
+
+    <select id="place"></select>
+
+    <button onclick="loadChart()">
+        Load Chart
+    </button>
+
+</div>
+
+<div class="chart-container">
+    <canvas id="chart"></canvas>
+</div>
+
+<script>
+
+let chart;
+
+//
+// LOAD PLACE OF BIRTH DROPDOWN
+//
+async function loadPlaces() {
+
+    const res = await fetch(
+        '/api/immigration/immigration.php?type=places'
+    );
+
+    const places = await res.json();
+
+    console.log("PLACES:", places);
+
+    const select = document.getElementById('place');
+
+    select.innerHTML = '';
+
+    places.forEach(p => {
+
+        const option = document.createElement('option');
+
+        option.value = p.place;
+        option.textContent = p.place;
+
+        select.appendChild(option);
+    });
+
+    //
+    // auto-load first chart
+    //
+    loadChart();
+}
+
+//
+// LOAD CHART
+//
+async function loadChart() {
+
+    const place = document.getElementById('place').value;
+
+    const res = await fetch(
+        '/api/immigration/immigration.php?place=' + encodeURIComponent(place)
+    );
+
+    const data = await res.json();
+
+    console.log("CHART DATA:", data);
+
+    //
+    // labels
+    //
+    const labels = data.map(
+        r => r.immigrant_status_and_period_of_immigration
+    );
+
+    //
+    // values
+    //
+    const values = data.map(
+        r => Number(r.total)
+    );
+
+    //
+    // destroy previous chart
+    //
+    if (chart) {
+        chart.destroy();
+    }
+
+    //
+    // create chart
+    //
+    chart = new Chart(
+        document.getElementById('chart'),
+        {
+
+            type: 'bar',
+
+            data: {
+
+                labels: labels,
+
+                datasets: [{
+
+                    label: place,
+
+                    data: values,
+
+                    borderWidth: 1
+                }]
+            },
+
+            options: {
+
+                responsive: true,
+
+                indexAxis: 'y',
+
+                plugins: {
+
+                    legend: {
+                        display: true
+                    },
+
+                    title: {
+                        display: true,
+                        text: place
+                    }
+                },
+
+                scales: {
+
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        }
+    );
+}
+
+//
+// start app
+//
+loadPlaces();
+
+</script>
+
+</body>
+</html>

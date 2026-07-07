@@ -1,0 +1,1 @@
+<?php $lines = file_get_contents("data_temp")

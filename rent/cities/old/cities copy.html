@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Canada Map</title>
+
+<style>
+
+    body {
+        margin: 0;
+        background: #f4f4f4;
+        font-family: Arial, sans-serif;
+    }
+
+    #map-container {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background: white;
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
+        cursor: grab;
+    }
+
+    svg:active {
+        cursor: grabbing;
+    }
+
+    /* Province colors */
+    #CA-AB { fill: #ffb3b3; }
+    #CA-BC { fill: #b3d9ff; }
+    #CA-MB { fill: #ffe0b3; }
+    #CA-NB { fill: #c2f0c2; }
+    #CA-NL { fill: #e6ccff; }
+    #CA-NS { fill: #ffd9e6; }
+    #CA-NT { fill: #ffffb3; }
+    #CA-NU { fill: #d9d9d9; }
+    #CA-ON { fill: #b3ffd9; }
+    #CA-PE { fill: #ffcccc; }
+    #CA-QC { fill: #ccccff; }
+    #CA-SK { fill: #fff0b3; }
+    #CA-YT { fill: #d9ffcc; }
+
+    path {
+        transition: fill 0.2s;
+    }
+
+    path:hover {
+        fill: #ff6666;
+    }
+
+    #map-container svg,
+    #map-container svg * {
+        cursor: grab !important;
+    }
+
+    #map-container.dragging svg,
+    #map-container.dragging svg * {
+        cursor: grabbing !important;
+    }
+
+</style>
+</head>
+<body>
+
+<div id="map-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+
+<script>
+
+fetch('canada.svg')
+    .then(r => r.text())
+    .then(svgData => {
+
+        document.getElementById('map-container').innerHTML = svgData;
+
+        const svg = document.querySelector('#map-container svg');
+
+        const panZoom = svgPanZoom(svg, {
+            zoomEnabled: true,
+            controlIconsEnabled: true,
+            fit: true,
+            center: true,
+            minZoom: 1,
+            maxZoom: 20
+        });
+
+        const container = document.getElementById('map-container');
+
+        container.style.cursor = 'grab';
+
+        container.addEventListener('mousedown', () => {
+            container.classList.add('dragging');
+        });
+
+        container.addEventListener('mouseup', () => {
+            container.classList.remove('dragging');
+        });
+
+        container.addEventListener('mouseleave', () => {
+            container.classList.remove('dragging');
+        });
+
+    });
+
+</script>
+
+</body>
+</html>

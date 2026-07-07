@@ -1,0 +1,42 @@
+1,Abbotsford, British Columbia,49.0521162,-122.3294790
+2,Barrie, Ontario,44.3893208,-79.6901302
+3,Belleville, Ontario,44.2436328,-77.3607597
+4,Brantford, Ontario,43.1408157,-80.2631733
+5,Calgary, Canada,51.0456064,-114.0575410
+6,Chilliwack, British Columbia,49.1709788,-121.9525500
+7,Drummondville, Centre-du-Québec,45.8864303,-72.5018764
+8,Edmonton, Canada,53.5462055,-113.4912410
+9,Fredericton, New Brunswick,45.9488278,-66.6291827
+10,Sudbury, Northeastern Ontario,46.4927200,-80.9912110
+11,Guelph, Ontario,43.5460516,-80.2493276
+12,Halifax, Halifax County,44.6486180,-63.5859487
+13,Hamilton, Ontario,43.2560802,-79.8728583
+14,Kamloops, British Columbia,50.6758269,-120.3394150
+15,Kelowna, British Columbia,49.8879177,-119.4959020
+16,Kingston, Ontario,44.3054151,-76.4283781
+17,Kitchener, Southwestern Ontario,43.4512910,-80.4927815
+18,Lethbridge, Canada,49.6945782,-112.8331033
+19,London, Ontario,42.9836747,-81.2496068
+20,Moncton, New Brunswick / Nouveau-Brunswick,46.0985679,-64.8004265
+21,Montr%C3%A9al, Montréal (région administrative),45.5031824,-73.5698065
+22,Nanaimo, British Columbia,49.1638770,-123.9381220
+23,Oshawa, Golden Horseshoe,43.8975558,-78.8635324
+24,Ottawa, Ontario,45.4208777,-75.6901106
+25,Ottawa, Ontario,45.4208777,-75.6901106
+26,Peterborough, Ontario,44.3048009,-78.3199496
+27,Qu%C3%A9bec,,52.4760892,-71.8258668
+28,Red+Deer, Canada,52.2690628,-113.8141464
+29,Regina, Canada,50.4479733,-104.6158764
+30,Saguenay, Québec,48.4059590,-71.0691830
+31,Saint+John, New Brunswic,45.2727640,-66.0627914
+32,Saskatoon, Canada,52.1318020,-106.6607670
+33,Sherbrooke, Québec,45.4032710,-71.8890380
+34,St.+Catharines, Golden Horseshoe,43.1579812,-79.2441003
+35,St.+John%27s, Newfoundland and Labrador,47.5646794,-52.7066964
+36,Thunder+Bay, Northwestern Ontario,48.4064140,-89.2597960
+37,Toronto, Ontario,43.6534817,-79.3839347
+38,Trois-Rivi%C3%A8res, Québec,46.3432325,-72.5428485
+39,Vancouver, British Columbia,49.2608724,-123.1139520
+40,Victoria, British Columbia,48.4283182,-123.3649530
+41,Windsor, Ontario,42.2858536,-82.9780695
+42,Winnipeg, Canada,49.8955367,-97.1384584

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canada Demographic Data</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="header">
+    <span>Philipp&ok</span>
+</div>
+
+
+<h4>Demographics:</h4>
+<p>
+    Estimates of the components of demographic growth, annual
+    <br><br>
+    Geography: Canada, Province or territory
+    <br><br>
+    Description: Components of population growth, annual: births, 
+    deaths, immigrants, emigrants, returning emigrants, 
+    net temporary emigrants, net interprovincial migration, net non-permanent residents...
+</p>
+
+<div class="controls">
+
+    <select id="geo"></select>
+
+    <select id="component">
+        <option value="Births">Births</option>
+        <option value="Deaths">Deaths</option>
+        <option value="Immigrants">Immigrants</option>
+        <option value="Emigrants">Emigrants</option>
+        <option value="Returning emigrants">Returning emigrants</option>
+        <option value="Net interprovincial migration">Net interprovincial migration</option>
+        <option value="Net non-permanent residents">Net non-permanent residents</option>
+    </select>
+
+    <button onclick="loadChart()">Load</button>
+
+</div>
+<div id="bottom">
+    <!-- - Api -> Stats Canada -> Zip -> CVS -> DB<br>
+    - Page -> JS -> AJAX API -> DB -> Page -> Chart -->
+</div>
+
+<canvas id="myChart"></canvas>
+
+<script>
+
+let chart;
+
+async function loadGeos()
+{
+    const response = await fetch('https://cloude.skill-off.me/api/demo-geos');
+
+    const geos = await response.json();
+    // const geos = await response.text();
+
+    const geoSelect = document.getElementById('geo');
+
+    console.log(geos);
+    console.log(Array.isArray(geos));
+
+    geos.forEach(g => {
+
+        const option = document.createElement('option');
+
+        option.value = g;
+        option.textContent = g;
+
+        geoSelect.appendChild(option);
+    });
+}
+
+async function loadChart()
+{
+    const geo = document.getElementById('geo').value;
+    const component = document.getElementById('component').value;
+
+    const response = await fetch('/api/demographic/demographic_data.php', {
+        method: 'POST',
+        body: new URLSearchParams({
+            geo,
+            component
+        })
+    });
+
+    const data = await response.json();
+
+    const labels = data.map(row => row.ref_date);
+    const values = data.map(row => Number(row.value));
+
+    const ctx = document.getElementById('myChart');
+
+    if(chart){
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+        type: 'line',
+
+        data: {
+            labels: labels,
+
+            datasets: [{
+                label: component + ' - ' + geo,
+                data: values,
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+
+        options: {
+            responsive: true,
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+loadGeos();
+
+</script>
+
+</body>
+</html>

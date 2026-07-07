@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rent Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="header">
+<a href="/"><span>Philipp&ok</span></a>
+</div>
+
+<div>
+<h2>Rent Trends</h2>
+
+<select id="geo">
+</select>
+
+<select id="type">
+</select>
+
+</div>
+<button onclick="loadChart()">Load</button>
+
+<canvas id="chart" width="800" height="400"></canvas>
+
+<script>
+let chart;
+
+function loadChart() {
+    const geo = document.getElementById('geo').value;
+    const type = document.getElementById('type').value;
+
+    fetch(`/api/rent/rent.php?geo=${encodeURIComponent(geo)}&type=${encodeURIComponent(type)}`)
+        .then(res => res.json())
+        .then(data => {
+
+            const ctx = document.getElementById('chart').getContext('2d');
+
+            if (chart) chart.destroy();
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Rent ($)',
+                        data: data.values,
+                        borderWidth: 2
+                    }]
+                }
+            });
+        });
+}
+
+
+async function loadGeos() {
+    const res = await fetch('/api/rent/geos.php');
+    const geos = await res.json();
+
+    const geo = document.getElementById('geo');
+
+
+    geos.forEach(g => {
+
+        const opt1 = document.createElement('option');
+        opt1.value = g;
+        opt1.textContent = g;
+        geo.appendChild(opt1);
+
+    });
+
+    // default selections
+    geo.value = 'Toronto';
+
+}
+
+async function loadType() {
+    const res = await fetch('/api/rent/type.php');
+    const geos = await res.json();
+
+    const geo= document.getElementById('type');
+
+
+    geos.forEach(g => {
+
+        const opt1 = document.createElement('option');
+        opt1.value = g;
+        opt1.textContent = g;
+        geo.appendChild(opt1);
+
+    });
+
+    //default selections
+    // geo.value = 'Canada';
+
+}
+
+async function init() {
+    await loadGeos();
+    await loadType();
+    loadChart();
+}
+
+init();
+
+</script>
+
+</body>
+</html>

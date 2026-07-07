@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canadian Cities</title>
+
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #111;
+}
+
+#map {
+    width: 100%;
+    height: 100vh;
+}
+
+.city-popup {
+    text-align: center;
+    line-height: 1.4;
+}
+
+.city-name {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.province {
+    color: #666;
+    font-size: 13px;
+}
+
+.glow-dot {
+    filter: drop-shadow(0 0 6px #00e5ff);
+}
+
+.leaflet-tooltip {
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    box-shadow: none;
+    font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+const map = L.map('map', {
+    zoomControl: true
+});
+
+L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png',
+    {
+        attribution: '&copy; OpenStreetMap &copy; CARTO'
+    }
+).addTo(map);
+
+loadData();
+
+async function loadData() {
+
+    try {
+
+        const [citiesRes] = await Promise.all([
+            fetch('api/cities.php'),
+        ]);
+
+        const cities = await citiesRes.json();
+
+        const bounds = [];
+
+        // console.log(cities);
+
+        for (const city of cities) {
+
+            const lat = parseFloat(city.lat);
+            const lon = parseFloat(city.lon);
+
+            if (isNaN(lat) || isNaN(lon)) continue;
+
+            bounds.push([lat, lon]);
+
+            const marker = L.circleMarker([lat, lon], {
+                radius: 5,
+                color: "#00e5ff",
+                weight: 1,
+                fillColor: "#00e5ff",
+                fillOpacity: 0.9,
+                className: 'glow-dot'
+            })
+            .addTo(map)
+            .bindTooltip(
+                `${city.city_name}, ${city.prov_abbr}`,
+                {
+                    direction: 'top',
+                    offset: [0, -8]
+                }
+            )
+            .bindPopup('Loading...');
+
+            marker.on('popupopen', async function () {
+
+                if (!marker.popupLoaded) {
+                    marker.setPopupContent(await buildPopup(city));
+                    marker.popupLoaded = true;
+                }
+
+            });
+        }
+
+        if (bounds.length > 0) {
+            map.fitBounds(bounds, { padding: [40, 40] });
+        }
+
+    } 
+    catch (err) {
+        console.error(err);
+        alert('Unable to load city data.');
+    }
+}
+
+async function buildPopup(city) {
+
+    let html = `
+        <b>${city.city_name}</b>
+        <span style="color:black">(${city.id})</span>
+        <hr>
+    `;
+
+    const response = await fetch('api/cur_city.php?id=' + city.id);
+    
+    // 2. Check if the HTTP status code is successful (200-299)
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    // 3. Parse the response body as JSON
+    const rent = await response.json();
+
+    // console.log(rent[0].geo);
+
+    rent.forEach(app => {
+
+        console.log(app.property_type + '/Bedrooms: ' + app.bedrooms  + ' - $' + app.rent_price);
+
+        html += `
+            <div style="color:black;">
+                ${app.property_type} / ${app.bedrooms} bedrooms: <b>$${app.rent_price}</b>
+            </div>
+        `;
+    });
+
+    // const myDiv = document.getElementById("desc");
+
+    // myDiv.innerHTML = html;
+
+    return html;
+}
+
+</script>
+
+</body>
+</html>

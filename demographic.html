@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canada Demographic Data</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body{
+            font-family: Arial;
+            margin:40px;
+        }
+
+        .controls{
+            margin-bottom:20px;
+        }
+
+        select{
+            padding:8px;
+            margin-right:10px;
+        }
+
+        canvas{
+            max-width:1200px;
+            height:500px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Demographic Growth</h1>
+
+<div class="controls">
+
+    <select id="geo"></select>
+
+    <select id="component">
+        <option value="Births">Births</option>
+        <option value="Deaths">Deaths</option>
+        <option value="Immigrants">Immigrants</option>
+        <option value="Emigrants">Emigrants</option>
+        <option value="Returning emigrants">Returning emigrants</option>
+        <option value="Net interprovincial migration">Net interprovincial migration</option>
+        <option value="Net non-permanent residents">Net non-permanent residents</option>
+    </select>
+
+    <button onclick="loadChart()">Load</button>
+
+</div>
+
+<canvas id="myChart"></canvas>
+
+<script>
+
+let chart;
+
+async function loadGeos()
+{
+    const response = await fetch('geos.php');
+    const geos = await response.json();
+
+    const geoSelect = document.getElementById('geo');
+
+    geos.forEach(g => {
+
+        const option = document.createElement('option');
+
+        option.value = g;
+        option.textContent = g;
+
+        geoSelect.appendChild(option);
+    });
+}
+
+async function loadChart()
+{
+    const geo = document.getElementById('geo').value;
+    const component = document.getElementById('component').value;
+
+    const response = await fetch(
+        `demographic_data.php?geo=${encodeURIComponent(geo)}&component=${encodeURIComponent(component)}`
+    );
+
+    const data = await response.json();
+
+    const labels = data.map(row => row.ref_date);
+    const values = data.map(row => Number(row.value));
+
+    const ctx = document.getElementById('myChart');
+
+    if(chart){
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+        type: 'line',
+
+        data: {
+            labels: labels,
+
+            datasets: [{
+                label: component + ' - ' + geo,
+                data: values,
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+
+        options: {
+            responsive: true,
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+loadGeos();
+
+</script>
+
+</body>
+</html>
